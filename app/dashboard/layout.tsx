@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { UserCog, ChevronDown, ShieldCheck, LucideIcon, LogOut, LucideHouse } from "lucide-react";
+import { UserCog, ChevronDown, ShieldCheck, LucideIcon, LogOut, LucideHouse, LucideRuler, LucideFlaskConical, LucidePaperclip, LucideNewspaper, LucideHeartPulse } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import ConfirmModal from "@/components/ConfirmModal";
 import { showMessage } from "@/components/MessageModal";
@@ -29,7 +29,7 @@ function NavButton({label, Icon, href}: {
 
   return (
     <button
-      onClick={() => router.push("/dashboard")}
+      onClick={() => router.push(href)}
       className="flex items-center gap-2 text-lg font-bold px-4 py-2 rounded hover:bg-white hover:text-blue-600 transition-colors"
     >
       <Icon size={20} /> {label}
@@ -259,6 +259,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <House size={20} /> Home
           </button> */}
           <NavButton label="Home" Icon={LucideHouse} href="/dashboard"></NavButton>
+          <NavButton label="UOMs" Icon={LucideRuler} href="/uom"></NavButton>
+          <NavButton label="Test Categories" Icon={LucideFlaskConical} href="/testctg"></NavButton>
+          <NavButton label="Medical Tests" Icon={LucideHeartPulse} href="/medtest"></NavButton>
 
           <div className="flex items-center gap-6">
             <NavDropdown 
