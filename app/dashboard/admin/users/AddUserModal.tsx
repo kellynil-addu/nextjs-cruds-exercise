@@ -151,7 +151,7 @@ export default function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalPro
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
-            </label>
+        </label>
             <input
               type="text"
               value={fullname}
