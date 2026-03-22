@@ -28,7 +28,7 @@ export default function EditableField({value, onChange}: {value: string, onChang
         const [input, setInput] = useState(valueState);
         const mouseOn = useRef(true);
         const divRef = useRef<HTMLDivElement>(null);
-        const inputRef = useRef<HTMLDivElement>(null);
+        const inputRef = useRef<HTMLInputElement>(null);
         const onSave = () => {
             setValue(input);
             if (onChange) onChange(input);
