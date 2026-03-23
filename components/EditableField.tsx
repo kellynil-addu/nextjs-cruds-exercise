@@ -7,7 +7,7 @@ import { LucidePencil, LucideSave } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { inputTextStyle } from "./BasicComponents";
 
-export default function EditableField({value, onChange}: {value: string, onChange?: (arg0: string) => void}) {
+export default function EditableField({value = "", onChange}: {value?: string, onChange?: (arg0: string) => void}) {
     const [isEditing, setEditing] = useState(false);
     const [valueState, setValue] = useState(value);
 
