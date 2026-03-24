@@ -5,7 +5,7 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { addUOM, getUOMs, removeUOMs, UOM, updateUOM } from "./actions";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import EditableField from "@/components/EditableField";
+import EditableField, { TextEditor } from "@/components/EditableField";
 import { CustomButton, Header1, HeaderControls, inputTextStyle } from "@/components/BasicComponents";
 import ConfirmModal from "@/components/ConfirmModal";
 
@@ -100,10 +100,10 @@ export default function Page() {
                     <input type="checkbox" onChange={onCheckBoxChange}></input>
                 </TableCell>
                 <TableCell className={`left-0 w-48 ${leftCells}`}> 
-                    <EditableField value={uom.name} onChange={s => uomChanged({...uom, name: s})}/> 
+                    <EditableField value={uom.name} Editor={TextEditor} onChange={s => uomChanged({...uom, name: s})}/> 
                 </TableCell>
                 <TableCell> 
-                    <EditableField value={uom.description} onChange={s => uomChanged({...uom, description: s})}/> 
+                    <EditableField value={uom.description} Editor={TextEditor} onChange={s => uomChanged({...uom, description: s})}/> 
                 </TableCell>
             </TableRowOddEven>
         )

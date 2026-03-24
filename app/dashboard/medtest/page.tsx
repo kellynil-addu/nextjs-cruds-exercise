@@ -6,7 +6,7 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { addMedTest, getMedTests, MedTest, removeMedTest, updateMedTest } from "./actions";
-import EditableField from "@/components/EditableField";
+import EditableField, { createOptionEditor, NumberEditor, TextEditor } from "@/components/EditableField";
 import { getUOMs, UOM } from "../uom/actions";
 import { addTestCtg, getTestCtgs, TestCtg } from "../testctg/actions";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -44,7 +44,7 @@ export default function Page() {
         const fetchUomPromise = getUOMs().then(setUoms);
         const fetchCtgPromise = getTestCtgs().then(setCtgs);
         
-        Promise.all([fetchTestPromise, fetchUomPromise, fetchCtgPromise])
+        Promise.allSettled([fetchTestPromise, fetchUomPromise, fetchCtgPromise])
             .catch(console.error)
             .finally(() => setLoading(false));
     }, [])
@@ -108,22 +108,22 @@ export default function Page() {
                     <input type="checkbox" onChange={onCheckBoxChange}></input>
                 </TableCell>
                 <TableCell className={`left-0 ${leftCells}`}> 
-                    <EditableField value={medTest.name} onChange={s => medTestChanged({...medTest, name: s})}/> 
+                    <EditableField value={medTest.name} Editor={TextEditor} onChange={s => medTestChanged({...medTest, name: s ?? ""})}/> 
                 </TableCell>
                 <TableCell> 
-                    <EditableField value={medTest.description} onChange={s => medTestChanged({...medTest, description: s})}/> 
+                    <EditableField value={medTest.description} Editor={TextEditor} onChange={s => medTestChanged({...medTest, description: s})}/> 
                 </TableCell>
                 <TableCell>
-                    {medTest.categoryname}
+                    <EditableField value={ctgs.find(i => Number(i.id) == medTest.idcategory)} Editor={createOptionEditor(ctgs, i => i.id, i => i.name)} preview={i => i.name} onChange={s => medTestChanged({...medTest, idcategory: +(s?.id ?? 0)})}/>
                 </TableCell>
                 <TableCell>
-                    {medTest.uomname}
+                    <EditableField value={uoms.find(i => Number(i.id) == medTest.iduom)} Editor={createOptionEditor(uoms, i => i.id, i => i.name)} preview={i => i.name} onChange={s => medTestChanged({...medTest, iduom: +(s?.id ?? 0)})}/>
                 </TableCell>
                 <TableCell>
-                    {medTest.normalmin}
+                    <EditableField value={medTest.normalmin} Editor={NumberEditor} onChange={s => medTestChanged({...medTest, normalmin: s ?? 0})}/>
                 </TableCell>
                 <TableCell>
-                    {medTest.normalmax}
+                    <EditableField value={medTest.normalmax} Editor={NumberEditor} onChange={s => medTestChanged({...medTest, normalmax: s ?? 0})}/>
                 </TableCell>
             </TableRowOddEven>
         )
@@ -219,6 +219,9 @@ export default function Page() {
                     <AddRow/>
                 </TableBody>
             </Table>
+
+            <div> {isLoading ? "Loading..." : medTests.length + " results"} </div>
+            <div> {isSaving ? "Saving..." : ""} </div>
         </div>
     )
 }

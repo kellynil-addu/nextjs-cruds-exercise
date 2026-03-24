@@ -5,7 +5,7 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { addTestCtg, getTestCtgs, removeTestCtgs, TestCtg, updateTestCtg } from "./actions";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import EditableField from "@/components/EditableField";
+import EditableField, { TextEditor } from "@/components/EditableField";
 import { CustomButton, Header1, HeaderControls, inputTextStyle } from "@/components/BasicComponents";
 import ConfirmModal from "@/components/ConfirmModal";
 
@@ -100,10 +100,10 @@ export default function Page() {
                     <input type="checkbox" onChange={onCheckBoxChange}></input>
                 </TableCell>
                 <TableCell className={`left-0 w-48 ${leftCells}`}> 
-                    <EditableField value={testCtg.name} onChange={s => testCtgChanged({...testCtg, name: s})}/> 
+                    <EditableField value={testCtg.name} Editor={TextEditor} onChange={s => testCtgChanged({...testCtg, name: s ?? ""})}/> 
                 </TableCell>
                 <TableCell> 
-                    <EditableField value={testCtg.description} onChange={s => testCtgChanged({...testCtg, description: s})}/> 
+                    <EditableField value={testCtg.description} Editor={TextEditor} onChange={s => testCtgChanged({...testCtg, description: s ?? ""})}/> 
                 </TableCell>
             </TableRowOddEven>
         )
@@ -156,7 +156,7 @@ export default function Page() {
             <TableHeader>
                 <tr>
                     <TableHeaderCell className={`sticky left-0 w-16 z-10 ${shadowFrozen}`}> Actions </TableHeaderCell>
-                    <TableHeaderCell className={`sticky left-16 w-48 z-10 ${shadowFrozen}`}> Unit </TableHeaderCell>
+                    <TableHeaderCell className={`sticky left-16 w-48 z-10 ${shadowFrozen}`}> Category </TableHeaderCell>
                     <TableHeaderCell> Description </TableHeaderCell>
                 </tr>
             </TableHeader>
