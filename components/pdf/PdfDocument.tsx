@@ -1,6 +1,5 @@
-import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { Role } from "./actions";
+import { Key } from 'react';
 
 // Create styles
 const styles = StyleSheet.create({
@@ -69,25 +68,18 @@ const styles = StyleSheet.create({
   },
 });
 
-interface RolesPdfDocumentProps {
-  roles: Role[];
-  totalCount: number;
-  searchQuery?: string;
-  selectedColumns: { key: string; label: string }[];
+export interface PdfDocumentProps<Type> {
+    objects: Type[];
+    objectKey: (arg0: Type) => Key;
+    columns: {label: string, flexWidth: string, output: (arg0: Type, arg1: number) => string}[];
+    options?: {searchQuery?: string, total?: number};
 }
 
-const RolesPdfDocument: React.FC<RolesPdfDocumentProps> = ({ roles, totalCount, searchQuery, selectedColumns }) => {
-  // Dynamic column width calculation
-  const getColWidth = (key: string) => {
-    if (key === 'rowNumber') return '8%';
-    const otherColsCount = selectedColumns.filter(c => c.key !== 'rowNumber').length;
-    return `${92 / otherColsCount}%`;
-  };
-
+export function PdfDocument<Type>({ objects, objectKey, columns, options }: PdfDocumentProps<Type>) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Header Section */}
+        {/* Header Section */} 
         <View fixed>
             <View style={styles.headerContainer}>
                 <Text style={styles.title}>Roles</Text>
@@ -96,31 +88,37 @@ const RolesPdfDocument: React.FC<RolesPdfDocumentProps> = ({ roles, totalCount, 
                 )} />
             </View>
             <Text style={styles.filterInfo}>
-                Filtered by: {searchQuery || "None"}
+                Filtered by: {options?.searchQuery || "None"}
             </Text>
         </View>
 
         {/* Table Header */}
         <View style={styles.tableHeaderRow} fixed>
-            {selectedColumns.map((col) => (
+            {/* {columns.map((col) => (
                 <View key={col.key} style={{ ...styles.tableCol, width: getColWidth(col.key) }}>
                     <Text style={[styles.tableCellHeader, col.key === 'rowNumber' ? { textAlign: 'right', paddingRight: 8 } : {}]}>
+                        {col.label}
+                    </Text>
+                </View>
+            ))} */}
+            {columns.map((col) => (
+                <View key={col.label} style={{...styles.tableCol, flex: col.flexWidth}}>
+                    <Text style={styles.tableCellHeader}>
                         {col.label}
                     </Text>
                 </View>
             ))}
         </View>
 
+
         {/* Table Rows */}
         <View style={styles.table}>
-          {roles.map((role, index) => (
-            <View key={role.id} style={styles.tableRow}>
-              {selectedColumns.map((col) => (
-                <View key={`${role.id}-${col.key}`} style={{ ...styles.tableCol, width: getColWidth(col.key) }}>
-                  <Text style={[styles.tableCell, col.key === 'rowNumber' ? { textAlign: 'right', paddingRight: 8 } : {}]}>
-                    {col.key === 'rowNumber' ? index + 1 :
-                     col.key === 'id' ? role.id :
-                     col.key === 'description' ? role.description : ''}
+          {objects.map((object, index) => (
+            <View key={objectKey(object)} style={styles.tableRow}>
+              {columns.map((col) => (
+                <View key={`${objectKey(object)}-${col.label}`} style={{ ...styles.tableCol, flex: col.flexWidth }}>
+                  <Text style={styles.tableCell}>
+                    {col.output(object, index)}
                   </Text>
                 </View>
               ))}
@@ -131,7 +129,7 @@ const RolesPdfDocument: React.FC<RolesPdfDocumentProps> = ({ roles, totalCount, 
         {/* Footer Section */}
         <View style={styles.footer} fixed>
             <Text>
-                {roles.length} of {totalCount} Roles
+                {objects.length} of {options?.total || objects.length} Roles
             </Text>
         </View>
       </Page>
@@ -139,4 +137,3 @@ const RolesPdfDocument: React.FC<RolesPdfDocumentProps> = ({ roles, totalCount, 
   );
 };
 
-export default RolesPdfDocument;

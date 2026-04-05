@@ -6,8 +6,9 @@ import { addTestCtg, getTestCtgs, removeTestCtgs, TestCtg, updateTestCtg } from 
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import EditableField, { TextEditor } from "@/components/EditableField";
-import { CustomButton, Header1, HeaderControls, inputTextStyle } from "@/components/BasicComponents";
+import { CustomButton, Header1, HeaderControls, inputTextStyle, VerticalSeparator } from "@/components/BasicComponents";
 import ConfirmModal from "@/components/ConfirmModal";
+import { DownloadPdf } from "@/components/pdf/DownloadPdfButton";
 
 export default function Page() {
     const { data: session, isPending } = useSession();
@@ -149,7 +150,20 @@ export default function Page() {
     <div className="space-y-4">
         <HeaderControls>
             <Header1> Test Categories </Header1>
-            <DeletePanel/>
+            <div className="flex items-stretch gap-4">
+                <DownloadPdf
+                    objects={testCtgs}
+                    objectKey={ctg => ctg.id} 
+                    columns={[
+                        {label: "Row no.", flexWidth: "36px 0 0", output: (_,index) => String(index + 1)},
+                        {label: "Category", flexWidth: "100px 0 0", output: ctg => ctg.name},
+                        {label: "Description", flexWidth: "240px 1 0", output: ctg => ctg.description}
+                    ]}
+                    filename={"TestCategories.pdf"}
+                />
+                <VerticalSeparator/>
+                <DeletePanel/>
+            </div>
         </HeaderControls>
 
         <Table>

@@ -32,3 +32,9 @@ export function Header1({children}: {children: ReactNode}) {
         </h1>
     )
 }
+
+export function VerticalSeparator() {
+    return (
+        <div className="min-w-0 min-h-max border-l border-l-gray-300"></div>
+    )
+}

@@ -6,13 +6,13 @@ import { useSession } from "@/lib/auth-client";
 import { showMessage } from '@/components/MessageModal';
 import { getRoles, addRole, deleteRole, updateRole, Role } from "./actions";
 import { downloadRolesExcel } from "./DownloadRoles";
-import DownloadRolesPdf from "./DownloadRolesPdf";
 import AddRoleModal from "./AddRoleModal";
 import DeleteRoleModal from "./DeleteRoleModal";
 import EditRoleModal from "./EditRoleModal";
 import PageGuardWrapper from "@/components/PageGuardWrapper";
 import ButtonGuardWrapper from "@/components/ButtonGuardWrapper";
 import ConfirmModal from "@/components/ConfirmModal";
+import { DownloadPdf } from "@/components/pdf/DownloadPdfButton";
 
 export default function Page() {
     const { data: session, isPending } = useSession();
@@ -135,7 +135,18 @@ export default function Page() {
                 </button>
             </ButtonGuardWrapper>
             <ButtonGuardWrapper requiredRoles={["ADMINISTRATOR", "USERS_CANPRINTROLES", "ROLES_CANDOWNLOADPDF"]}>
-                <DownloadRolesPdf roles={filteredRoles} searchQuery={searchQuery} />
+                {/* <DownloadRolesPdf roles={filteredRoles} searchQuery={searchQuery} /> */}
+                <DownloadPdf
+                    objects={filteredRoles}
+                    objectKey={role => role.id} 
+                    columns={[
+                        {label: "Row no.", flexWidth: "60spx 0 0", output: (_,index) => String(index + 1)},
+                        {label: "ID", flexWidth: "200px 0 0", output: role => role.id},
+                        {label: "Description", flexWidth: "200px 1 0", output: role => role.description}
+                    ]}
+                    filename={"Roles.pdf"}
+                    options={{searchQuery: searchQuery, total: roles.length}}
+                        />
             </ButtonGuardWrapper>
         </div>
 
