@@ -52,11 +52,11 @@ pool.on('error', (err) => {
 });
 
 pool.on('connect', () => {
-    console.log('[DB] New client connected to pool');
+    // console.log('[DB] New client connected to pool');
 });
 
 pool.on('remove', () => {
-    console.log('[DB] Client removed from pool');
+    // console.log('[DB] Client removed from pool');
 });
 
 // Verify connection on startup ONLY in development

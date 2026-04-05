@@ -71,18 +71,19 @@ const styles = StyleSheet.create({
 export interface PdfDocumentProps<Type> {
     objects: Type[];
     objectKey: (arg0: Type) => Key;
-    columns: {label: string, flexWidth: string, output: (arg0: Type, arg1: number) => string}[];
+    columns: {label: string, flexWidth: string, output: (arg0: Type, arg1: number) => any}[];
+    name: string;
     options?: {searchQuery?: string, total?: number};
 }
 
-export function PdfDocument<Type>({ objects, objectKey, columns, options }: PdfDocumentProps<Type>) {
+export function PdfDocument<Type>({ objects, objectKey, columns, name, options }: PdfDocumentProps<Type>) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         {/* Header Section */} 
         <View fixed>
             <View style={styles.headerContainer}>
-                <Text style={styles.title}>Roles</Text>
+                <Text style={styles.title}>{name}</Text>
                 <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
                     `Page ${pageNumber} of ${totalPages}`
                 )} />

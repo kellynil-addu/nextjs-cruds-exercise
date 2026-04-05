@@ -12,7 +12,8 @@ import EditRoleModal from "./EditRoleModal";
 import PageGuardWrapper from "@/components/PageGuardWrapper";
 import ButtonGuardWrapper from "@/components/ButtonGuardWrapper";
 import ConfirmModal from "@/components/ConfirmModal";
-import { DownloadPdf } from "@/components/pdf/DownloadPdfButton";
+import { DownloadPdfButton } from "@/components/pdf/DownloadPdfButton";
+import DownloadExcelButton, { downloadArrayExcel } from "@/components/excel/DownloadExcel";
 
 export default function Page() {
     const { data: session, isPending } = useSession();
@@ -76,20 +77,6 @@ export default function Page() {
         }
     };
 
-    const handleDownloadExcel = async () => {
-        const confirmed = await ConfirmModal("Download Roles to Excel?", {
-            okText: "Yes, Download",
-            cancelText: "Cancel",
-            okColor: "bg-green-600 hover:bg-green-700",
-        });
-        if (!confirmed) return;
-        const filtered = roles.filter(role => 
-            role.id.toLowerCase().includes(searchQuery.toLowerCase()) || 
-            role.description.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        downloadRolesExcel(filtered);
-    };
-
     if (isPending || !session) {
         return <div className="p-6">Loading...</div>; 
     }
@@ -127,16 +114,19 @@ export default function Page() {
 
         <div className="flex gap-2">
             <ButtonGuardWrapper requiredRoles={["ADMINISTRATOR", "USERS_CANDOWNLOADROLES", "ROLES_CANDOWNLOADEXCEL"]}>
-                <button
-                    onClick={handleDownloadExcel}
-                    className="rounded-md bg-green-600 px-5 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors shadow-sm whitespace-nowrap"
-                >
-                    Download Excel
-                </button>
+                <DownloadExcelButton
+                    objects={filteredRoles}
+                    columns={[
+                        {header: "Row Number", key: "rowNumber", width: 12, output: (_,index) => index + 1},
+                        {header: "Role Name", key: "roleName", width: 15, output: (role) => role.id},
+                        {header: "Description", key: "roleDesc", width: 20, output: (role) => role.description}
+                    ]}
+                    name={"Roles"}
+                />
             </ButtonGuardWrapper>
             <ButtonGuardWrapper requiredRoles={["ADMINISTRATOR", "USERS_CANPRINTROLES", "ROLES_CANDOWNLOADPDF"]}>
                 {/* <DownloadRolesPdf roles={filteredRoles} searchQuery={searchQuery} /> */}
-                <DownloadPdf
+                <DownloadPdfButton
                     objects={filteredRoles}
                     objectKey={role => role.id} 
                     columns={[
@@ -144,7 +134,7 @@ export default function Page() {
                         {label: "ID", flexWidth: "200px 0 0", output: role => role.id},
                         {label: "Description", flexWidth: "200px 1 0", output: role => role.description}
                     ]}
-                    filename={"Roles.pdf"}
+                    name={"Roles"}
                     options={{searchQuery: searchQuery, total: roles.length}}
                         />
             </ButtonGuardWrapper>

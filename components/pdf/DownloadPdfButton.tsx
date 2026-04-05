@@ -5,15 +5,12 @@ import { pdf } from '@react-pdf/renderer';
 import ConfirmModal from "@/components/ConfirmModal";
 import { PdfDocument, PdfDocumentProps } from './PdfDocument';
 
-export interface PdfDownloadProps<Type> extends PdfDocumentProps<Type> {
-    filename: string,
-}
 
-export function DownloadPdf<Type>({ objects, objectKey, columns, filename, options}: PdfDownloadProps<Type>) {
+export function DownloadPdfButton<Type>({ objects, objectKey, columns, name, options}: PdfDocumentProps<Type>) {
     const [isGenerating, setIsGenerating] = useState(false);
 
     const handleDownload = async () => {
-        const confirmed = await ConfirmModal(`Download ${filename}?`, {
+        const confirmed = await ConfirmModal(`Download ${name}.pdf?`, {
             okText: "Yes, Download",
             cancelText: "Cancel",
             okColor: "bg-purple-600 hover:bg-purple-700",
@@ -26,13 +23,14 @@ export function DownloadPdf<Type>({ objects, objectKey, columns, filename, optio
                     objects={objects}
                     objectKey={objectKey}
                     columns={columns}
+                    name={name}
                     options={options}
                 />
             ).toBlob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = filename;
+            a.download = name;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

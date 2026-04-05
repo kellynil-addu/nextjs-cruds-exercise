@@ -1,15 +1,17 @@
 "use client";
 
-import { CustomButton, Header1, HeaderControls, inputSelectStyle, inputTextStyle } from "@/components/BasicComponents";
+import { CustomButton, Header1, HeaderControls, inputSelectStyle, inputTextStyle, VerticalSeparator } from "@/components/BasicComponents";
 import { shadowFrozen, Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRowOddEven } from "@/components/TableComponents";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, Key, useCallback, useEffect, useRef, useState } from "react";
 import { addMedTest, getMedTests, MedTest, removeMedTest, updateMedTest } from "./actions";
 import EditableField, { createOptionEditor, NumberEditor, TextEditor } from "@/components/EditableField";
 import { getUOMs, UOM } from "../uom/actions";
 import { addTestCtg, getTestCtgs, TestCtg } from "../testctg/actions";
 import ConfirmModal from "@/components/ConfirmModal";
+import { DownloadPdfButton } from "@/components/pdf/DownloadPdfButton";
+import DownloadExcelButton from "@/components/excel/DownloadExcel";
 
 export default function Page() {
     const { data: session, isPending } = useSession();
@@ -199,7 +201,37 @@ export default function Page() {
         <div className="space-y-4">
             <HeaderControls>
                 <Header1>Medical Tests</Header1>
-                <DeletePanel/>
+                <div className="flex items-stretch gap-4">
+                    <DownloadExcelButton
+                        objects={medTests}
+                        columns={[
+                            {header: "Row Number", key: "rowNumber", width: 12, output: (_,index) => index + 1},
+                            {header: "Name", key: "testName", width: 15, output: (medTest) => medTest.name},
+                            {header: "Description", key: "testDesc", width: 20, output: (medTest) => medTest.description},
+                            {header: "Category", key: "testCategory", width: 10, output: (medTest) => ctgs.find(i => Number(i.id) == medTest.idcategory)?.name},
+                            {header: "Unit", key: 'testUnit', width: 10, output: (medTest) => uoms.find(i => Number(i.id) == medTest.idcategory)?.name},
+                            {header: "Min", key: "testMin", width: 6, output: (medTest) => medTest.normalmin},
+                            {header: "Max", key: "testMax", width: 6, output: (medTest) => medTest.normalmax},
+                        ]}
+                        name={"Medical Tests"}
+                    />
+                    <DownloadPdfButton 
+                        objects={medTests} 
+                        objectKey={medTest => medTest.id} 
+                        columns={[
+                            {label: "Row No.", flexWidth: "40px 0 0", output: (_,index) => String(index + 1)},
+                            {label: "Name", flexWidth: "200px 1 0", output: (medTest) => medTest.name},
+                            {label: "Description", flexWidth: "400px 1 0", output: (medTest) => medTest.description},
+                            {label: "Category", flexWidth: "120px 0 0", output: (medTest) => ctgs.find(i => Number(i.id) == medTest.idcategory)?.name},
+                            {label: "Unit", flexWidth: "100px 0 0", output: (medTest) => uoms.find(i => Number(i.id) == medTest.idcategory)?.name},
+                            {label: "Min", flexWidth: "80px 0 0", output: (medTest) => medTest.normalmin},
+                            {label: "Max", flexWidth: "80px 0 0", output: (medTest) => medTest.normalmax},
+                        ]}
+                        name={"Medical Tests"} 
+                    />
+                    <VerticalSeparator/>
+                    <DeletePanel/>
+                </div>
             </HeaderControls>
 
             <Table>

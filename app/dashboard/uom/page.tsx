@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 import EditableField, { TextEditor } from "@/components/EditableField";
 import { CustomButton, Header1, HeaderControls, inputTextStyle, VerticalSeparator } from "@/components/BasicComponents";
 import ConfirmModal from "@/components/ConfirmModal";
-import { DownloadPdf } from "@/components/pdf/DownloadPdfButton";
+import { DownloadPdfButton } from "@/components/pdf/DownloadPdfButton";
+import DownloadExcelButton from "@/components/excel/DownloadExcel";
 
 export default function Page() {
     const { data: session, isPending } = useSession();
@@ -151,7 +152,16 @@ export default function Page() {
         <HeaderControls>
             <Header1> UOMs </Header1>
             <div className="flex items-stretch gap-4">
-                <DownloadPdf
+                <DownloadExcelButton
+                    objects={uoms}
+                    columns={[
+                        {header: "Row Number", key: "rowNumber", width: 12, output: (_,index) => index + 1},
+                        {header: "Unit", key: "uomname", width: 15, output: (uom) => uom.id},
+                        {header: "Description", key: "uomDesc", width: 20, output: (uom) => uom.description}
+                    ]}
+                    name={"UOMs"}
+                />
+                <DownloadPdfButton
                     objects={uoms}
                     objectKey={uom => uom.id} 
                     columns={[
@@ -159,7 +169,7 @@ export default function Page() {
                         {label: "Unit", flexWidth: "100px 0 0", output: uom => uom.name},
                         {label: "Description", flexWidth: "240px 1 0", output: uom => uom.description}
                     ]}
-                    filename={"UOMs.pdf"}
+                    name={"UOMs"}
                 />
                 <VerticalSeparator/>
                 <DeletePanel/>

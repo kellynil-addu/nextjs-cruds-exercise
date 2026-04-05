@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 import EditableField, { TextEditor } from "@/components/EditableField";
 import { CustomButton, Header1, HeaderControls, inputTextStyle, VerticalSeparator } from "@/components/BasicComponents";
 import ConfirmModal from "@/components/ConfirmModal";
-import { DownloadPdf } from "@/components/pdf/DownloadPdfButton";
+import { DownloadPdfButton } from "@/components/pdf/DownloadPdfButton";
+import DownloadExcelButton from "@/components/excel/DownloadExcel";
 
 export default function Page() {
     const { data: session, isPending } = useSession();
@@ -151,7 +152,16 @@ export default function Page() {
         <HeaderControls>
             <Header1> Test Categories </Header1>
             <div className="flex items-stretch gap-4">
-                <DownloadPdf
+                <DownloadExcelButton
+                    objects={testCtgs}
+                    columns={[
+                        {header: "Row Number", key: "rowNumber", width: 12, output: (_,index) => index + 1},
+                        {header: "Category", key: "categoryName", width: 15, output: (testCtg) => testCtg.id},
+                        {header: "Description", key: "categoryDesc", width: 20, output: (testCtg) => testCtg.description}
+                    ]}
+                    name={"Test Categories"}
+                />
+                <DownloadPdfButton
                     objects={testCtgs}
                     objectKey={ctg => ctg.id} 
                     columns={[
@@ -159,7 +169,7 @@ export default function Page() {
                         {label: "Category", flexWidth: "100px 0 0", output: ctg => ctg.name},
                         {label: "Description", flexWidth: "240px 1 0", output: ctg => ctg.description}
                     ]}
-                    filename={"TestCategories.pdf"}
+                    name={"Test Categories"}
                 />
                 <VerticalSeparator/>
                 <DeletePanel/>
