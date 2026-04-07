@@ -156,7 +156,7 @@ export default function Page() {
                     objects={testCtgs}
                     columns={[
                         {header: "Row Number", key: "rowNumber", width: 12, output: (_,index) => index + 1},
-                        {header: "Category", key: "categoryName", width: 15, output: (testCtg) => testCtg.id},
+                        {header: "Category", key: "categoryName", width: 15, output: (testCtg) => testCtg.name},
                         {header: "Description", key: "categoryDesc", width: 20, output: (testCtg) => testCtg.description}
                     ]}
                     name={"Test Categories"}
