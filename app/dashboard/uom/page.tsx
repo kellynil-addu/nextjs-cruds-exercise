@@ -156,7 +156,7 @@ export default function Page() {
                     objects={uoms}
                     columns={[
                         {header: "Row Number", key: "rowNumber", width: 12, output: (_,index) => index + 1},
-                        {header: "Unit", key: "uomname", width: 15, output: (uom) => uom.id},
+                        {header: "Unit", key: "uomname", width: 15, output: (uom) => uom.name},
                         {header: "Description", key: "uomDesc", width: 20, output: (uom) => uom.description}
                     ]}
                     name={"UOMs"}
